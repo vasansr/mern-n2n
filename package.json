@@ -1,0 +1,8 @@
+{
+	"name": "mern-n2n",
+	"version": "1.0.0",
+	"description": "Mern stack: Novice to Ninja",
+	"dependencies": {
+		"express": "4.x"
+	}
+}
