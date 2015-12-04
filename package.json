@@ -4,5 +4,8 @@
 	"description": "Mern stack: Novice to Ninja",
 	"dependencies": {
 		"express": "4.x"
+	},
+	"scripts": {
+		"start": "node webapp.js"
 	}
 }
