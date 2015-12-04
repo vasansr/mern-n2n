@@ -1,4 +1,5 @@
-# MERN stack tutorial
+# MERN Stack: Novice to Ninja
+A step-by-step tutorial to learn how to create your own app using the MERN stack
 
 ## Step 1
 
