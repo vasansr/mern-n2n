@@ -18,7 +18,7 @@ popular task-running tools are grunt and gulp. Here, we use gulp.
 In this step, we will use gulp to only transform JSX, later, we will use gulp for
 automating other tasks as well.
 
-Thanks to [[this][http://tylermcginnis.com/reactjs-tutorial-pt-2-building-react-applications-with-gulp-and-browserify/]] blogpost.
+Thanks to [this](http://tylermcginnis.com/reactjs-tutorial-pt-2-building-react-applications-with-gulp-and-browserify/) blogpost.
 
 Additional installs for this step:
 $ npm install --global gulp
