@@ -1,11 +1,16 @@
 {
-	"name": "mern-n2n",
-	"version": "1.0.0",
-	"description": "Mern stack: Novice to Ninja",
-	"dependencies": {
-		"express": "4.x"
-	},
-	"scripts": {
-		"start": "node webapp.js"
-	}
+  "name": "mern-n2n",
+  "version": "1.0.0",
+  "description": "Mern stack: Novice to Ninja",
+  "dependencies": {
+    "express": "4.x"
+  },
+  "scripts": {
+    "start": "node webapp.js"
+  },
+  "devDependencies": {
+    "gulp": "^3.9.0",
+    "gulp-babel": "^6.1.1",
+    "babel-preset-react": "^6.1.18"
+  }
 }
