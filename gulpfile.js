@@ -12,3 +12,8 @@ gulp.task('transform', function() {
 		.pipe(gulp.dest(path.DEST_JS));
 });
 
+gulp.task('watch', function(){
+	gulp.watch(path.SRC_JSX, ['transform']);
+});
+
+gulp.task('default', ['watch']);

@@ -1,5 +1,5 @@
 ReactDOM.render(React.createElement(
 	'h1',
 	null,
-	'Hello, world!'
+	'Hello, World!'
 ), document.getElementById('example'));
