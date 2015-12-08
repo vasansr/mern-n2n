@@ -11,8 +11,16 @@ var Bug = React.createClass({
 });
 
 var BugList = React.createClass({
+	getInitialState: function() {
+		return {data: []};
+	},
+	componentDidMount: function() {
+		getData(function(bugs) {
+			this.setState({data: bugs});
+		}.bind(this));		// the bind() lets 'this' for setState be *this* 'this'
+	},
 	render: function() {
-		var bugs = this.props.data.map(function(bug) {
+		var bugs = this.state.data.map(function(bug) {
 			return (
 				<Bug key={bug._id} data={bug} />
 			);
@@ -41,8 +49,13 @@ var allBugs = [
 
 ];
 
+function getData(callback) {
+		// return asynchronously as if it were an ajax call
+		setTimeout(function() { callback(allBugs); }, 0);
+}
+
 ReactDOM.render(
-	<BugList data={allBugs}/>,
+	<BugList />,
 	document.getElementById('example')
 );
 
