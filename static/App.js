@@ -28,47 +28,72 @@ var BugList = React.createClass({
 	displayName: "BugList",
 
 	getInitialState: function () {
-		return { data: [] };
+		return { data: [], newBug: { title: '', owner: '' } };
 	},
 	componentDidMount: function () {
 		getData((function (bugs) {
 			this.setState({ data: bugs });
 		}).bind(this)); // the bind() lets 'this' for setState be *this* 'this'
 	},
+	addBug: function (event) {
+		console.log('Add a new bug ...');
+		event.preventDefault();
+		var bugs = this.state.data;
+		var form = document.forms.newBug;
+		bugs.push({ _id: allBugs.length + 1, owner: form.owner.value, title: form.title.value });
+		this.setState({ data: bugs });
+		// clear the form for the next entry
+		form.owner.value = "";form.title.value = "";
+	},
 	render: function () {
 		var bugs = this.state.data.map(function (bug) {
 			return React.createElement(Bug, { key: bug._id, data: bug });
 		});
 		return React.createElement(
-			"table",
-			{ className: "bug-list" },
+			"div",
+			null,
 			React.createElement(
-				"thead",
-				null,
+				"table",
+				{ className: "bug-list" },
 				React.createElement(
-					"tr",
-					{ className: "bug header" },
+					"thead",
+					null,
 					React.createElement(
-						"th",
-						{ className: "bug-id" },
-						"Id"
-					),
-					React.createElement(
-						"th",
-						{ className: "bug-owner" },
-						"Owner"
-					),
-					React.createElement(
-						"th",
-						{ className: "bug-description" },
-						"Title"
+						"tr",
+						{ className: "bug header" },
+						React.createElement(
+							"th",
+							{ className: "bug-id" },
+							"Id"
+						),
+						React.createElement(
+							"th",
+							{ className: "bug-owner" },
+							"Owner"
+						),
+						React.createElement(
+							"th",
+							{ className: "bug-description" },
+							"Title"
+						)
 					)
+				),
+				React.createElement(
+					"tbody",
+					null,
+					bugs
 				)
 			),
 			React.createElement(
-				"tbody",
-				null,
-				bugs
+				"form",
+				{ name: "newBug", onSubmit: this.addBug },
+				React.createElement("input", { type: "text", name: "title", size: "40", placeholder: "Bug Title" }),
+				React.createElement("input", { type: "text", name: "owner", placeholder: "Owner" }),
+				React.createElement(
+					"button",
+					null,
+					"Add"
+				)
 			)
 		);
 	}

@@ -12,12 +12,22 @@ var Bug = React.createClass({
 
 var BugList = React.createClass({
 	getInitialState: function() {
-		return {data: []};
+		return {data: [], newBug: {title: '', owner: ''}};
 	},
 	componentDidMount: function() {
 		getData(function(bugs) {
 			this.setState({data: bugs});
 		}.bind(this));		// the bind() lets 'this' for setState be *this* 'this'
+	},
+	addBug: function(event) {
+		console.log('Add a new bug ...');
+		event.preventDefault();
+		var bugs = this.state.data;
+		var form = document.forms.newBug;
+		bugs.push({_id: allBugs.length+1, owner: form.owner.value, title: form.title.value});
+		this.setState({data: bugs});
+		// clear the form for the next entry
+		form.owner.value = ""; form.title.value = "";
 	},
 	render: function() {
 		var bugs = this.state.data.map(function(bug) {
@@ -26,18 +36,25 @@ var BugList = React.createClass({
 			);
 		});
 		return (
-			<table className="bug-list">
-				<thead>
-					<tr className="bug header">
-						<th className="bug-id">Id</th>
-						<th className="bug-owner">Owner</th>
-						<th className="bug-description">Title</th>
-					</tr>
-				</thead>
-				<tbody>
-					{bugs}
-				</tbody>
-			</table>
+			<div>
+				<table className="bug-list">
+					<thead>
+						<tr className="bug header">
+							<th className="bug-id">Id</th>
+							<th className="bug-owner">Owner</th>
+							<th className="bug-description">Title</th>
+						</tr>
+					</thead>
+					<tbody>
+						{bugs}
+					</tbody>
+				</table>
+				<form name="newBug" onSubmit={this.addBug}>
+					<input type="text" name="title" size="40" placeholder="Bug Title" />
+					<input type="text" name="owner" placeholder="Owner" />
+					<button>Add</button>
+				</form>
+			</div>
 		)
 	}
 });
@@ -50,8 +67,8 @@ var allBugs = [
 ];
 
 function getData(callback) {
-		// return asynchronously as if it were an ajax call
-		setTimeout(function() { callback(allBugs); }, 0);
+	// return asynchronously as if it were an ajax call
+	setTimeout(function() { callback(allBugs); }, 0);
 }
 
 ReactDOM.render(

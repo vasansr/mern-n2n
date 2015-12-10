@@ -23,3 +23,23 @@ Thanks to [this](http://tylermcginnis.com/reactjs-tutorial-pt-2-building-react-a
 Additional installs for this step:
 $ npm install --global gulp
 
+## Step 3: Gulp Watch
+
+Here, we add a watch task to gulp so that when changes to App.js are saved, it
+automatically transforms it. Convenient during development.
+
+## Step 4: Compose React Components
+
+Now, we replace the simple React code with a composed component, and use data
+to populate the contents. This a kind of for-loop implementation.
+
+## Step 5: Use state instead of props
+
+The correct way to use data is by using the state, not props. In this step, we
+make the transition to state.
+
+## Step 6: Dynamic Updates
+
+What use of state if we can't update it? Here, we update the state and add
+more data dynamically, on user interaction.
+
