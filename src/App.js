@@ -14,21 +14,44 @@ var BugList = React.createClass({
 	getInitialState: function() {
 		return {data: [], newBug: {title: '', owner: ''}};
 	},
+
 	componentDidMount: function() {
-		getData(function(bugs) {
-			this.setState({data: bugs});
-		}.bind(this));		// the bind() lets 'this' for setState be *this* 'this'
+		$.ajax({
+			url: '/api/bugs', dataType: 'json',
+			cache: false,
+			success: function(bugs) {
+				this.setState({data: bugs});
+			}.bind(this),		// the bind() lets 'this' for setState be *this* 'this'
+			error: function(xhr, status, err) {
+				console.error(status, err.toString());
+			}
+		});
 	},
+
 	addBug: function(event) {
-		console.log('Add a new bug ...');
 		event.preventDefault();
-		var bugs = this.state.data;
+
 		var form = document.forms.newBug;
-		bugs.push({_id: allBugs.length+1, owner: form.owner.value, title: form.title.value});
-		this.setState({data: bugs});
+		var bug = {owner: form.owner.value, title: form.title.value};
+
+		$.ajax({
+			url: '/api/bugs', dataType: 'json', contentType:'application/json',
+			type: 'POST', data: JSON.stringify(bug),
+			success: function(bug) {
+				var bugs = this.state.data;
+				bugs.push(bug);
+				this.setState({data: bugs});
+			}.bind(this),
+			error: function(xhr, status, err) {
+				// in production, we'd give a message to the user
+				console.error(status, err.toString());
+			}
+		});
+
 		// clear the form for the next entry
 		form.owner.value = ""; form.title.value = "";
 	},
+
 	render: function() {
 		var bugs = this.state.data.map(function(bug) {
 			return (
@@ -59,16 +82,7 @@ var BugList = React.createClass({
 	}
 });
 
-var allBugs = [
-	{_id: 1, owner: 'Vasan', title: '404 Not Found on some files'},
-	{_id: 2, owner: 'Sandeep', title: 'Error on console: no property "set" in undefined'},
-	{_id: 3, owner: 'Fazle', title: 'Warning: validateDOMNesting(...): <tr> cannot appear as a child of <table>.'}
-
-];
-
 function getData(callback) {
-	// return asynchronously as if it were an ajax call
-	setTimeout(function() { callback(allBugs); }, 0);
 }
 
 ReactDOM.render(

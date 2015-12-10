@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Mern stack: Novice to Ninja",
   "dependencies": {
+    "body-parser": "^1.14.1",
     "express": "4.x"
   },
   "scripts": {
