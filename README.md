@@ -43,3 +43,18 @@ make the transition to state.
 What use of state if we can't update it? Here, we update the state and add
 more data dynamically, on user interaction.
 
+## Step 7: Data on the Server
+
+Instead of keeping 'fake' data on the client, we'll now get from and send the data
+to the server, but not use MongoDB yet.
+
+## Step 8: Data on MongoDB
+
+In this step, we move the data to MongoDB from the in-memory store.
+
+## Step 9: Filtering
+
+Rather than fetch all the records from the server, we'll add a convenience filter
+that fetches us a set of records based on an input query filter.
+
+

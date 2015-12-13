@@ -12,15 +12,52 @@ var Bug = React.createClass({
 	}
 });
 
+var BugFilter = React.createClass({
+	render: function() {
+		return(
+			<form name="filter" onSubmit={this.props.submitHandler}>
+				Filter:<br/>
+				Priority:
+				<select name="priority">
+					<option value="">(Any)</option>
+					<option value="P1">P1</option>
+					<option value="P2">P2</option>
+					<option value="P3">P3</option>
+				</select>
+				Status:
+				<select name="status">
+					<option value="">(Any)</option>
+					<option>New</option>
+					<option>Open</option>
+					<option>Fixed</option>
+					<option>Closed</option>
+				</select>
+				<button type="submit">Search</button>
+			</form>
+		);
+	}
+});
+
 var BugList = React.createClass({
 	getInitialState: function() {
 		return {data: [], newBug: {title: '', owner: ''}};
 	},
 
 	componentDidMount: function() {
+		this.loadData();
+	},
+
+	loadData: function(event) {
+		if (event)
+			event.preventDefault();
+
+		var form = document.forms.filter;
+		var filter = {priority: form.priority.value, status: form.status.value};
+
 		$.ajax({
-			url: '/api/bugs', dataType: 'json',
-			cache: false,
+			url: '/api/bugs', type: 'GET',
+			data: filter,
+			dataType: 'json',
 			success: function(bugs) {
 				this.setState({data: bugs});
 			}.bind(this),		// the bind() lets 'this' for setState be *this* 'this'
@@ -37,8 +74,9 @@ var BugList = React.createClass({
 		var bug = {owner: form.owner.value, title: form.title.value, priority: 'P3', status: 'Open'};
 
 		$.ajax({
-			url: '/api/bugs', dataType: 'json', contentType:'application/json',
-			type: 'POST', data: JSON.stringify(bug),
+			url: '/api/bugs', type: 'POST', contentType:'application/json',
+			data: JSON.stringify(bug),
+			dataType: 'json',
 			success: function(bug) {
 				var bugs = this.state.data;
 				bugs.push(bug);
@@ -62,6 +100,7 @@ var BugList = React.createClass({
 		});
 		return (
 			<div>
+				<BugFilter submitHandler={this.loadData} />
 				<table className="bug-list">
 					<thead>
 						<tr className="bug header">

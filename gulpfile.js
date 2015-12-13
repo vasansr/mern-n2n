@@ -11,6 +11,7 @@ gulp.task('transform', function() {
 		.pipe(babel({presets: ["react"]}))
 		.on('error', function(err) {
 			console.log('Caught error: ', err);
+			console.log(err.stack);
 			this.emit('end');	// ideally this should not be done in production'.
 		})
 		.pipe(gulp.dest(path.DEST_JS));
