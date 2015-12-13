@@ -4,32 +4,38 @@
 
 var express = require('express');
 var bodyParser = require('body-parser');
+var MongoClient = require('mongodb').MongoClient;
 
 var app_port = 8080;
+var dbUrl = 'mongodb://localhost:27017/bugsdb';
+var db;
 
 app = express();
 app.use('/', express.static('static'));
 
-var allBugs = [
-	{_id: 1, owner: 'Vasan', title: '404 Not Found on some files'},
-	{_id: 2, owner: 'Sandeep', title: 'Error on console: no property "set" in undefined'},
-	{_id: 3, owner: 'Fazle', title: 'Warning: validateDOMNesting(...): <tr> cannot appear as a child of <table>.'}
-];
-
 app.get('/api/bugs', function(req, res) {
-	res.status(200).send(JSON.stringify(allBugs));
+	db.collection('bugs').find().toArray(function (err, docs) {
+		res.status(200).send(docs);
+	});
 });
 
 var jsonParser = bodyParser.json({strict: false});
+
 app.post('/api/bugs', jsonParser, function(req, res) {
 	var newBug = req.body;
 	console.log('Adding new bug: ', newBug);
 	// In a production app, we would validate this, whether the required fields exist etc..
-	newBug._id = allBugs.length + 1;
-	allBugs.push(newBug);
-	res.status(200).send(JSON.stringify(newBug));
+
+	db.collection('bugs').insertOne(newBug, function(err, result) {
+		db.collection('bugs').findOne({_id: result.insertedId}, function(err, addedBug) {
+			res.status(200).send(addedBug);
+		});
+	});
 });
 
-app.listen(app_port);
-console.log(new Date(), 'Started server on port ' + app_port);
+MongoClient.connect(dbUrl, function(err, database) {
+	db = database;
+	app.listen(app_port);
+	console.log(new Date(), 'Started server on port ' + app_port);
+});
 

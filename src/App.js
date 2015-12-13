@@ -3,6 +3,8 @@ var Bug = React.createClass({
 		return(
 			<tr className="bug">
 				<td className="bug-id">{this.props.data._id}</td>
+				<td className="bug-status">{this.props.data.status}</td>
+				<td className="bug-priority">{this.props.data.priority}</td>
 				<td className="bug-owner">{this.props.data.owner}</td>
 				<td className="bug-description">{this.props.data.title}</td>
 			</tr>
@@ -32,7 +34,7 @@ var BugList = React.createClass({
 		event.preventDefault();
 
 		var form = document.forms.newBug;
-		var bug = {owner: form.owner.value, title: form.title.value};
+		var bug = {owner: form.owner.value, title: form.title.value, priority: 'P3', status: 'Open'};
 
 		$.ajax({
 			url: '/api/bugs', dataType: 'json', contentType:'application/json',
@@ -64,6 +66,8 @@ var BugList = React.createClass({
 					<thead>
 						<tr className="bug header">
 							<th className="bug-id">Id</th>
+							<th className="bug-status">Status</th>
+							<th className="bug-priority">Priority</th>
 							<th className="bug-owner">Owner</th>
 							<th className="bug-description">Title</th>
 						</tr>
