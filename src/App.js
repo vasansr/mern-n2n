@@ -1,3 +1,7 @@
+var React = require('react');
+var ReactDOM = require('react-dom');
+var $ = require('jquery');
+
 var Bug = React.createClass({
 	render: function() {
 		return(
@@ -124,9 +128,6 @@ var BugList = React.createClass({
 		)
 	}
 });
-
-function getData(callback) {
-}
 
 ReactDOM.render(
 	<BugList />,

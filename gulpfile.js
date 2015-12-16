@@ -1,25 +1,42 @@
 var gulp = require('gulp');
-var babel = require('gulp-babel');
+var browserify = require('browserify');
+var babelify = require('babelify');
+var vinylSource = require('vinyl-source-stream');
+var watchify = require('watchify');
 
-var path = {
-	SRC_JSX: ['src/*.js','src/*.jsx'],
-	DEST_JS: 'static'
-};
+gulp.task('build', function() {
+	return browserify('src/App.js')
+		.transform('babelify', {presets: 'react'}) 
+		.bundle()
+		.pipe(vinylSource('bundle.js'))
+		.pipe(gulp.dest('static/'));
 
-gulp.task('transform', function() {
-	gulp.src(path.SRC_JSX)
-		.pipe(babel({presets: ["react"]}))
+});
+
+gulp.task('watch', function() {
+	var opts = { debug: true, cache: {}, packageCache: {}};
+	var watcher = watchify(browserify('src/App.js', opts))
+		.transform('babelify', {presets: 'react'});
+
+	watcher.on('update', function() {
+		watcher.bundle()
+			.on('error', function(err) {
+				console.log(err.message);
+				console.log(err.codeFrame);
+			})
+			.pipe(vinylSource('bundle.js'))
+			.pipe(gulp.dest('static/'));
+		console.log('Updated');
+	})
+		.bundle()
 		.on('error', function(err) {
-			console.log('Caught error: ', err);
-			console.log(err.stack);
-			this.emit('end');	// ideally this should not be done in production'.
+			console.log(err.message);
+			console.log(err.codeFrame);
 		})
-		.pipe(gulp.dest(path.DEST_JS));
+		.pipe(vinylSource('bundle.js'))
+		.pipe(gulp.dest('static/'));
+
+	return watcher;
 });
 
-gulp.task('watch', function(){
-	gulp.watch(path.SRC_JSX, ['transform']);
-});
-
-gulp.task('default', ['transform','watch']);
-
+gulp.task('default', ['watch']);
