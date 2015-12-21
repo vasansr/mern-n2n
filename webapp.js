@@ -5,6 +5,7 @@
 var express = require('express');
 var bodyParser = require('body-parser');
 var MongoClient = require('mongodb').MongoClient;
+var ObjectId = require('mongodb').ObjectID;
 
 var app_port = 8080;
 var dbUrl = 'mongodb://localhost:27017/bugsdb';
@@ -22,6 +23,12 @@ app.get('/api/bugs', function(req, res) {
 
 	db.collection('bugs').find(filter).toArray(function (err, docs) {
 		res.status(200).send(docs);
+	});
+});
+
+app.get('/api/bugs/:id', function(req, res) {
+	db.collection('bugs').findOne({_id: ObjectId(req.params.id)}, function(err, bug) {
+		res.status(200).send(bug);
 	});
 });
 
