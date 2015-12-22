@@ -22,8 +22,42 @@ var Bug = React.createClass({
 });
 
 var BugEdit = React.createClass({
+	render: function() {
+		return(
+			<div>
+				Edit bug: {this.props.params.id}
+				<br/>
+				<form name="bugEdit" onSubmit={this.submitEdits}>
+					Priority:
+					<select name="priority" value={this.state.priority} onChange={this.onChangePriority}>
+						<option value="">(Any)</option>
+						<option value="P1">P1</option>
+						<option value="P2">P2</option>
+						<option value="P3">P3</option>
+					</select>
+					<br/>
+					Status:
+					<select value={this.state.status} onChange={this.onChangeStatus}>
+						<option value="">(Any)</option>
+						<option>New</option>
+						<option>Open</option>
+						<option>Fixed</option>
+						<option>Closed</option>
+					</select>
+					<br/>
+					Owner: <input type="text" value={this.state.owner} onChange={this.onChangeOwner}/>
+					<br/>
+					Title: <input type="text" value={this.state.title} onChange={this.onChangeTitle}/>
+					<br/>
+					<button type="submit">Submit</button>
+				</form>
+				<Link to="/bugs">Back to Bug List</Link><br/>
+			</div>
+		);
+	},
+
 	getInitialState: function() {
-		return {data: []};
+		return {};
 	},
 
 	componentDidMount: function() {
@@ -35,46 +69,60 @@ var BugEdit = React.createClass({
 			url: '/api/bugs/' + this.props.params.id, type: 'GET',
 			dataType: 'json',
 			success: function(bug) {
-				this.setState({data: bug});
+				this.setState(bug);
 			}.bind(this),
 			error: function(xhr, status, err) {
 				console.error(status, err.toString());
 			}
 		});
 	},
-	render: function() {
-		return(
-			<div>
-				Edit bug: {this.props.params.id}
-				<br/>
-				Status: {this.state.data.status}
-				<br/>
-				Priority: {this.state.data.priority}
-				<br/>
-				Owner: {this.state.data.owner}
-				<br/>
-				Title: {this.state.data.title}
-				<br/>
-				<Link to="/bugs">Back to Bug List</Link><br/>
-			</div>
-		);
+
+	onChangePriority: function(e) {
+		this.setState({priority: e.target.value});
+	},
+	onChangeStatus: function(e) {
+		this.setState({status: e.target.value});
+	},
+	onChangeOwner: function(e) {
+		this.setState({owner: e.target.value});
+	},
+	onChangeTitle: function(e) {
+		this.setState({title: e.target.value});
+	},
+	submitEdits: function(e) {
+		e.preventDefault();
+		var bug = this.state;
+
+		$.ajax({
+			url: '/api/bugs/' + this.props.params.id, type: 'PUT', contentType:'application/json',
+			data: JSON.stringify(bug),
+			dataType: 'json',
+			success: function(bug) {
+				this.setState(bug);
+			}.bind(this),
+			error: function(xhr, status, err) {
+				// in production, we'd give a message to the user
+				console.error(status, err.toString());
+			}
+		});
 	}
+
 });
 
 var BugFilter = React.createClass({
 	render: function() {
 		return(
-			<form name="filter" onSubmit={this.props.submitHandler}>
+			<form name="filter" onSubmit={this.submit}>
 				Filter:<br/>
 				Priority:
-				<select name="priority">
+				<select name="priority" value={this.state.priority} onChange={this.onChangePriority}>
 					<option value="">(Any)</option>
 					<option value="P1">P1</option>
 					<option value="P2">P2</option>
 					<option value="P3">P3</option>
 				</select>
 				Status:
-				<select name="status">
+				<select name="status" value={this.state.status} onChange={this.onChangeStatus}>
 					<option value="">(Any)</option>
 					<option>New</option>
 					<option>Open</option>
@@ -84,6 +132,22 @@ var BugFilter = React.createClass({
 				<button type="submit">Search</button>
 			</form>
 		);
+	},
+
+	getInitialState: function() {
+		return {priority: this.props.init.priority, status: this.props.init.status};
+	},
+
+	onChangePriority: function(e) {
+		this.setState({priority: e.target.value});
+	},
+	onChangeStatus: function(e) {
+		this.setState({status: e.target.value});
+	},
+
+	submit: function(e) {
+		if (e) e.preventDefault();
+		this.props.submitHandler(this.state);
 	}
 });
 
@@ -127,10 +191,8 @@ var BugList = React.createClass({
 		});
 	},
 
-	changeFilter: function(event) {
-		if (event) event.preventDefault();
-		var form = document.forms.filter;
-		this.props.history.push({pathname: '/bugs', search: '?' + $(form).serialize()});
+	changeFilter: function(filter) {
+		this.props.history.push({pathname: '/bugs', search: '?' + $.param(filter)});
 	},
 
 	addBug: function(event) {
@@ -168,7 +230,7 @@ var BugList = React.createClass({
 		});
 		return (
 			<div>
-				<BugFilter submitHandler={this.changeFilter} />
+				<BugFilter submitHandler={this.changeFilter} init={this.props.location.query}/>
 				<table className="bug-list">
 					<thead>
 						<tr className="bug header">
