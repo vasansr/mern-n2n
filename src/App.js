@@ -5,6 +5,7 @@ var Router = require('react-router').Router
 var Route = require('react-router').Route
 var Link = require('react-router').Link
 
+var Paper = require('material-ui/lib/paper');
 var Card = require('material-ui/lib/card/card');
 var CardHeader = require('material-ui/lib/card/card-header');
 var CardText = require('material-ui/lib/card/card-text');
@@ -13,25 +14,15 @@ var SelectField = require('material-ui/lib/select-field');
 var Avatar = require('material-ui/lib/avatar');
 var FontIcon = require('material-ui/lib/font-icon');
 var Colors = require('material-ui/lib/styles').Colors;
+var Table = require('material-ui/lib/table/table');
+var TableBody = require('material-ui/lib/table/table-body');
+var TableHeader = require('material-ui/lib/table/table-header');
+var TableHeaderColumn = require('material-ui/lib/table/table-header-column');
+var TableRow = require('material-ui/lib/table/table-row');
+var TableRowColumn = require('material-ui/lib/table/table-row-column');
 
 injectTapEventPlugin = require("react-tap-event-plugin");
 injectTapEventPlugin();
-
-var Bug = React.createClass({
-	render: function() {
-		return(
-			<tr className="bug">
-				<td className="bug-id">
-					<Link to={'/bugs/' + this.props.data._id}>{this.props.data._id}</Link>
-				</td>
-				<td className="bug-status">{this.props.data.status}</td>
-				<td className="bug-priority">{this.props.data.priority}</td>
-				<td className="bug-owner">{this.props.data.owner}</td>
-				<td className="bug-description">{this.props.data.title}</td>
-			</tr>
-		);
-	}
-});
 
 var BugEdit = React.createClass({
 	render: function() {
@@ -184,6 +175,22 @@ var BugFilter = React.createClass({
 	}
 });
 
+var Bug = React.createClass({
+	render: function() {
+		return(
+			<TableRow>
+				<TableRowColumn style={{height: 24, width: 180}}>
+					<Link to={'/bugs/' + this.props.data._id}>{this.props.data._id}</Link>
+				</TableRowColumn>
+				<TableRowColumn style={{height: 24, width: 40}}>{this.props.data.status}</TableRowColumn>
+				<TableRowColumn style={{height: 24, width: 40}}>{this.props.data.priority}</TableRowColumn>
+				<TableRowColumn style={{height: 24, width: 60}}>{this.props.data.owner}</TableRowColumn>
+				<TableRowColumn style={{height: 24}}>{this.props.data.title}</TableRowColumn>
+			</TableRow>
+		);
+	}
+});
+
 var BugList = React.createClass({
 
 	getInitialState: function() {
@@ -258,7 +265,7 @@ var BugList = React.createClass({
 
 	render: function() {
 		console.log("Rendering", this.state.data.length, "items");
-		var bugs = this.state.data.map(function(bug) {
+		var bugRows = this.state.data.map(function(bug) {
 			return (
 				<Bug key={bug._id} data={bug} />
 			);
@@ -266,20 +273,22 @@ var BugList = React.createClass({
 		return (
 			<div>
 				<BugFilter submitHandler={this.changeFilter} init={this.props.location.query}/>
-				<table className="bug-list">
-					<thead>
-						<tr className="bug header">
-							<th className="bug-id">Id</th>
-							<th className="bug-status">Status</th>
-							<th className="bug-priority">Priority</th>
-							<th className="bug-owner">Owner</th>
-							<th className="bug-description">Title</th>
-						</tr>
-					</thead>
-					<tbody>
-						{bugs}
-					</tbody>
-				</table>
+				<Paper zDepth={1} style={{marginTop: 10, marginBottom: 10}}>
+					<Table>
+						<TableHeader displaySelectAll={false} adjustForCheckbox={false}>
+							<TableRow>
+								<TableHeaderColumn style={{width: 180}}>Id</TableHeaderColumn>
+								<TableHeaderColumn style={{width: 40}}>Status</TableHeaderColumn>
+								<TableHeaderColumn style={{width: 40}}>Priority</TableHeaderColumn>
+								<TableHeaderColumn style={{width: 60}}>Owner</TableHeaderColumn>
+								<TableHeaderColumn>Title</TableHeaderColumn>
+							</TableRow>
+						</TableHeader>
+						<TableBody stripedRows={true}>
+							{bugRows}
+						</TableBody>
+					</Table>
+				</Paper>
 				<form name="newBug" onSubmit={this.addBug}>
 					<input type="text" name="title" size="40" placeholder="Bug Title" />
 					<input type="text" name="owner" placeholder="Owner" />
