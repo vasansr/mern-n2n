@@ -11,6 +11,7 @@ var CardHeader = require('material-ui/lib/card/card-header');
 var CardText = require('material-ui/lib/card/card-text');
 var RaisedButton = require('material-ui/lib/raised-button');
 var SelectField = require('material-ui/lib/select-field');
+var TextField = require('material-ui/lib/text-field');
 var Avatar = require('material-ui/lib/avatar');
 var FontIcon = require('material-ui/lib/font-icon');
 var Colors = require('material-ui/lib/styles').Colors;
@@ -194,7 +195,7 @@ var Bug = React.createClass({
 var BugList = React.createClass({
 
 	getInitialState: function() {
-		return {data: [], newBug: {title: '', owner: ''}};
+		return {data: []};
 	},
 
 	componentDidUpdate: function(prevProps) {
@@ -237,12 +238,7 @@ var BugList = React.createClass({
 		this.props.history.push({pathname: '/bugs', search: searchString});
 	},
 
-	addBug: function(event) {
-		event.preventDefault();
-
-		var form = document.forms.newBug;
-		var bug = {owner: form.owner.value, title: form.title.value, priority: 'P3', status: 'Open'};
-
+	addBug: function(bug) {
 		$.ajax({
 			url: '/api/bugs', type: 'POST', contentType:'application/json',
 			data: JSON.stringify(bug),
@@ -289,13 +285,49 @@ var BugList = React.createClass({
 						</TableBody>
 					</Table>
 				</Paper>
-				<form name="newBug" onSubmit={this.addBug}>
-					<input type="text" name="title" size="40" placeholder="Bug Title" />
-					<input type="text" name="owner" placeholder="Owner" />
-					<button>Add</button>
-				</form>
+				<AddBug submitHandler={this.addBug} />
 			</div>
 		)
+	}
+});
+
+var AddBug = React.createClass({
+	render: function() {
+		return (
+			<Card initiallyExpanded={true}>
+				<CardHeader title="Create" subtitle="Add a new bug"
+					actAsExpander={true} showExpandableButton={true}
+					avatar={
+						<Avatar backgroundColor={Colors.teal500} icon={
+							<FontIcon className="fa fa-plus"></FontIcon>
+						} />
+					}
+				/>
+				<CardText expandable={true} style={{paddingTop: 8}}>
+					<TextField hintText="Bug Title" value={this.state.title} onChange={this.onChangeTitle}/>
+					<br />
+					<TextField hintText="Owner" value={this.state.owner} onChange={this.onChangeOwner}/>
+					<br />
+					<RaisedButton label="Add" primary={true} onTouchTap={this.submit}/>
+				</CardText>
+			</Card>
+		)
+	},
+
+	getInitialState: function() {
+		return {owner: '', title: ''};
+	},
+	onChangeTitle: function(e) {
+		this.setState({'title': e.target.value});
+	},
+	onChangeOwner: function(e) {
+		this.setState({'owner': e.target.value});
+	},
+	submit: function() {
+		this.props.submitHandler({
+			owner: this.state.owner, title: this.state.title,
+			priority: 'P3', status: 'New'
+		});
 	}
 });
 
