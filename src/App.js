@@ -5,6 +5,18 @@ var Router = require('react-router').Router
 var Route = require('react-router').Route
 var Link = require('react-router').Link
 
+var Card = require('material-ui/lib/card/card');
+var CardHeader = require('material-ui/lib/card/card-header');
+var CardText = require('material-ui/lib/card/card-text');
+var RaisedButton = require('material-ui/lib/raised-button');
+var SelectField = require('material-ui/lib/select-field');
+var Avatar = require('material-ui/lib/avatar');
+var FontIcon = require('material-ui/lib/font-icon');
+var Colors = require('material-ui/lib/styles').Colors;
+
+injectTapEventPlugin = require("react-tap-event-plugin");
+injectTapEventPlugin();
+
 var Bug = React.createClass({
 	render: function() {
 		return(
@@ -109,33 +121,52 @@ var BugEdit = React.createClass({
 
 });
 
+var anyValue = '*';
+
+var priorityItems = [
+	{ payload: anyValue, text: '(Any)' },
+	{ payload: 'P1', text: 'P1' },
+	{ payload: 'P2', text: 'P2' },
+	{ payload: 'P3', text: 'P3' },
+];
+
+var statusItems = [
+	{ payload: anyValue, text: '(Any)' },
+	{ payload: 'New', text: 'New' },
+	{ payload: 'Open', text: 'Open' },
+	{ payload: 'Closed', text: 'Closed' },
+];
+
 var BugFilter = React.createClass({
 	render: function() {
 		return(
-			<form name="filter" onSubmit={this.submit}>
-				Filter:<br/>
-				Priority:
-				<select name="priority" value={this.state.priority} onChange={this.onChangePriority}>
-					<option value="">(Any)</option>
-					<option value="P1">P1</option>
-					<option value="P2">P2</option>
-					<option value="P3">P3</option>
-				</select>
-				Status:
-				<select name="status" value={this.state.status} onChange={this.onChangeStatus}>
-					<option value="">(Any)</option>
-					<option>New</option>
-					<option>Open</option>
-					<option>Fixed</option>
-					<option>Closed</option>
-				</select>
-				<button type="submit">Search</button>
-			</form>
+			<Card initiallyExpanded={true}>
+				<CardHeader title="Filter" subtitle="Show a subset of records"
+					actAsExpander={true} showExpandableButton={true}
+					avatar={
+						<Avatar backgroundColor={Colors.teal500} icon={
+							<FontIcon className="fa fa-filter"></FontIcon>
+						}>
+						</Avatar>
+					}
+				/>
+				<CardText expandable={true} style={{paddingTop: 8}}>
+					<SelectField value={this.state.priority} onChange={this.onChangePriority}
+						menuItems={priorityItems} floatingLabelText="Priority" />&nbsp;
+					<SelectField value={this.state.status} onChange={this.onChangeStatus}
+						menuItems={statusItems} floatingLabelText="Status" />
+					<br/>
+					<RaisedButton label="Apply" primary={true} onTouchTap={this.submit} />
+					<br/> {/* Give some space for the select dropdown */}
+					<br/>
+					<br/>
+				</CardText>
+			</Card>
 		);
 	},
 
 	getInitialState: function() {
-		return {priority: this.props.init.priority, status: this.props.init.status};
+		return {priority: this.props.init.priority || anyValue, status: this.props.init.status || anyValue};
 	},
 
 	onChangePriority: function(e) {
@@ -145,9 +176,11 @@ var BugFilter = React.createClass({
 		this.setState({status: e.target.value});
 	},
 
-	submit: function(e) {
-		if (e) e.preventDefault();
-		this.props.submitHandler(this.state);
+	submit: function() {
+		var filter = {};
+		if (this.state.priority != anyValue) filter.priority = this.state.priority;
+		if (this.state.status != anyValue) filter.status = this.state.status;
+		this.props.submitHandler(filter);
 	}
 });
 
@@ -192,7 +225,9 @@ var BugList = React.createClass({
 	},
 
 	changeFilter: function(filter) {
-		this.props.history.push({pathname: '/bugs', search: '?' + $.param(filter)});
+		var queryString = $.param(filter);
+		var searchString = (queryString != '') ? '?' + queryString : '';
+		this.props.history.push({pathname: '/bugs', search: searchString});
 	},
 
 	addBug: function(event) {

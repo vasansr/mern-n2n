@@ -57,14 +57,23 @@ In this step, we move the data to MongoDB from the in-memory store.
 Rather than fetch all the records from the server, we'll add a convenience filter
 that fetches us a set of records based on an input query filter.
 
-## Step 9: Use Browserify
+## Step 10: Use Browserify
 
 Use Browserify to build and bundle client side scripts into one bundle. Now,
 all dependencies are part of package.json, and this includes client-side scripts.
 
-## Step 10: Routing
+## Step 11: Routing
 
 Add routing: this includes navigation to other components and also handling
 options and parameters for each route.
+
+## Step 12: Forms
+
+Use forms and state to store forms' truth values, use state variables to submit
+data to backend.
+
+## Step 13: Add Color
+
+Use material-ui library to create a material design look and feel to the UI.
 
 
