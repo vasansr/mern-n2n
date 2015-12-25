@@ -10,8 +10,10 @@ var Card = require('material-ui/lib/card/card');
 var CardHeader = require('material-ui/lib/card/card-header');
 var CardText = require('material-ui/lib/card/card-text');
 var RaisedButton = require('material-ui/lib/raised-button');
+var FlatButton = require('material-ui/lib/flat-button');
 var SelectField = require('material-ui/lib/select-field');
 var TextField = require('material-ui/lib/text-field');
+var Snackbar = require('material-ui/lib/snackbar');
 var Avatar = require('material-ui/lib/avatar');
 var FontIcon = require('material-ui/lib/font-icon');
 var Colors = require('material-ui/lib/styles').Colors;
@@ -25,37 +27,58 @@ var TableRowColumn = require('material-ui/lib/table/table-row-column');
 injectTapEventPlugin = require("react-tap-event-plugin");
 injectTapEventPlugin();
 
+var priorityValues = [
+	{ payload: 'P1', text: 'P1' },
+	{ payload: 'P2', text: 'P2' },
+	{ payload: 'P3', text: 'P3' },
+];
+
+var statusValues = [
+	{ payload: 'New', text: 'New' },
+	{ payload: 'Open', text: 'Open' },
+	{ payload: 'Closed', text: 'Closed' },
+];
+
+var anyValue = '*';
+
+var anyOption = [
+	{ payload: anyValue, text: '(Any)' },
+];
+
+var priorityFilterValues = anyOption.concat(priorityValues);
+var statusFilterValues = anyOption.concat(statusValues);
+
 var BugEdit = React.createClass({
 	render: function() {
 		return(
-			<div>
-				Edit bug: {this.props.params.id}
-				<br/>
-				<form name="bugEdit" onSubmit={this.submitEdits}>
-					Priority:
-					<select name="priority" value={this.state.priority} onChange={this.onChangePriority}>
-						<option value="">(Any)</option>
-						<option value="P1">P1</option>
-						<option value="P2">P2</option>
-						<option value="P3">P3</option>
-					</select>
-					<br/>
-					Status:
-					<select value={this.state.status} onChange={this.onChangeStatus}>
-						<option value="">(Any)</option>
-						<option>New</option>
-						<option>Open</option>
-						<option>Fixed</option>
-						<option>Closed</option>
-					</select>
-					<br/>
-					Owner: <input type="text" value={this.state.owner} onChange={this.onChangeOwner}/>
-					<br/>
-					Title: <input type="text" value={this.state.title} onChange={this.onChangeTitle}/>
-					<br/>
-					<button type="submit">Submit</button>
-				</form>
-				<Link to="/bugs">Back to Bug List</Link><br/>
+			<div style={{maxWidth: 800}}>
+				<Card>
+					<CardHeader title="Edit Bug" subtitle={this.props.params.id}
+						avatar={
+							<Avatar backgroundColor={Colors.teal500} icon={
+								<FontIcon className="fa fa-bug"></FontIcon>
+							}>
+							</Avatar>
+						} />
+					<CardText>
+						<SelectField fullWidth={true} value={this.state.priority} onChange={this.onChangePriority}
+								menuItems={priorityValues} floatingLabelText="Priority" />
+						<br/>
+						<SelectField fullWidth={true} value={this.state.status} onChange={this.onChangeStatus}
+								menuItems={statusValues} floatingLabelText="Status" />
+						<br/>
+						<TextField fullWidth={true} floatingLabelText="Bug Title" multiLine={true}
+								value={this.state.title} onChange={this.onChangeTitle}/>
+						<br/>
+						<TextField fullWidth={true} floatingLabelText="Owner"
+								value={this.state.owner} onChange={this.onChangeOwner}/>
+						<br/>
+						<RaisedButton label="Save" primary={true} onTouchTap={this.submit} />
+						<FlatButton label="Back to Bug List" onTouchTap={this.backToBugs} />
+						<Snackbar ref="successMessage" message="Changes saved, thank you." 
+								autoHideDuration={5000} action="ok" onActionTouchTap={this.dismissSuccessMessage} />
+					</CardText>
+				</Card>
 			</div>
 		);
 	},
@@ -93,8 +116,7 @@ var BugEdit = React.createClass({
 	onChangeTitle: function(e) {
 		this.setState({title: e.target.value});
 	},
-	submitEdits: function(e) {
-		e.preventDefault();
+	submit: function() {
 		var bug = this.state;
 
 		$.ajax({
@@ -103,31 +125,24 @@ var BugEdit = React.createClass({
 			dataType: 'json',
 			success: function(bug) {
 				this.setState(bug);
+				this.refs.successMessage.show();
 			}.bind(this),
 			error: function(xhr, status, err) {
 				// in production, we'd give a message to the user
 				console.error(status, err.toString());
 			}
 		});
+	},
+
+	backToBugs: function() {
+		this.props.history.push({pathname: '/bugs'});
+	},
+
+	dismissSuccessMessage: function() {
+		this.refs.successMessage.dismiss();
 	}
 
 });
-
-var anyValue = '*';
-
-var priorityItems = [
-	{ payload: anyValue, text: '(Any)' },
-	{ payload: 'P1', text: 'P1' },
-	{ payload: 'P2', text: 'P2' },
-	{ payload: 'P3', text: 'P3' },
-];
-
-var statusItems = [
-	{ payload: anyValue, text: '(Any)' },
-	{ payload: 'New', text: 'New' },
-	{ payload: 'Open', text: 'Open' },
-	{ payload: 'Closed', text: 'Closed' },
-];
 
 var BugFilter = React.createClass({
 	render: function() {
@@ -144,9 +159,9 @@ var BugFilter = React.createClass({
 				/>
 				<CardText expandable={true} style={{paddingTop: 8}}>
 					<SelectField value={this.state.priority} onChange={this.onChangePriority}
-						menuItems={priorityItems} floatingLabelText="Priority" />&nbsp;
+						menuItems={priorityFilterValues} floatingLabelText="Priority" />&nbsp;
 					<SelectField value={this.state.status} onChange={this.onChangeStatus}
-						menuItems={statusItems} floatingLabelText="Status" />
+						menuItems={statusFilterValues} floatingLabelText="Status" />
 					<br/>
 					<RaisedButton label="Apply" primary={true} onTouchTap={this.submit} />
 					<br/> {/* Give some space for the select dropdown */}
