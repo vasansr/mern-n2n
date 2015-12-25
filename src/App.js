@@ -5,6 +5,8 @@ var Router = require('react-router').Router
 var Route = require('react-router').Route
 var Link = require('react-router').Link
 
+var Button = require('react-bootstrap/lib/Button');
+
 var Bug = React.createClass({
 	render: function() {
 		return(
@@ -112,7 +114,7 @@ var BugEdit = React.createClass({
 var BugFilter = React.createClass({
 	render: function() {
 		return(
-			<form name="filter" onSubmit={this.submit}>
+			<div>
 				Filter:<br/>
 				Priority:
 				<select name="priority" value={this.state.priority} onChange={this.onChangePriority}>
@@ -129,8 +131,8 @@ var BugFilter = React.createClass({
 					<option>Fixed</option>
 					<option>Closed</option>
 				</select>
-				<button type="submit">Search</button>
-			</form>
+				<Button bsStyle="primary" onClick={this.submit}>Search</Button>
+			</div>
 		);
 	},
 
