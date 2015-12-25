@@ -6,6 +6,12 @@ var Route = require('react-router').Route
 var Link = require('react-router').Link
 
 var Button = require('react-bootstrap/lib/Button');
+var Panel = require('react-bootstrap/lib/Panel');
+var Grid = require('react-bootstrap/lib/Grid');
+var Row = require('react-bootstrap/lib/Row');
+var Col = require('react-bootstrap/lib/Col');
+var Input = require('react-bootstrap/lib/Input');
+var ButtonInput = require('react-bootstrap/lib/ButtonInput');
 
 var Bug = React.createClass({
 	render: function() {
@@ -114,25 +120,35 @@ var BugEdit = React.createClass({
 var BugFilter = React.createClass({
 	render: function() {
 		return(
-			<div>
-				Filter:<br/>
-				Priority:
-				<select name="priority" value={this.state.priority} onChange={this.onChangePriority}>
-					<option value="">(Any)</option>
-					<option value="P1">P1</option>
-					<option value="P2">P2</option>
-					<option value="P3">P3</option>
-				</select>
-				Status:
-				<select name="status" value={this.state.status} onChange={this.onChangeStatus}>
-					<option value="">(Any)</option>
-					<option>New</option>
-					<option>Open</option>
-					<option>Fixed</option>
-					<option>Closed</option>
-				</select>
-				<Button bsStyle="primary" onClick={this.submit}>Search</Button>
-			</div>
+			<Panel collapsible defaultExpanded={true} header="Filter">
+				<Grid fluid={true}>
+					<Row>
+						<Col xs={12} sm={6} md={4}>
+							<Input type="select" label="Priority"
+								value={this.state.priority} onChange={this.onChangePriority}>
+								<option value="">(Any)</option>
+								<option value="P1">P1</option>
+								<option value="P2">P2</option>
+								<option value="P3">P3</option>
+							</Input>
+						</Col>
+						<Col xs={12} sm={6} md={4}>
+							<Input type="select" label="Status" value={this.state.status} onChange={this.onChangeStatus}>
+								<option value="">(Any)</option>
+								<option>New</option>
+								<option>Open</option>
+								<option>Fixed</option>
+								<option>Closed</option>
+							</Input>
+						</Col>
+						<Col xs={12} sm={6} md={4}>
+							<Input label="&nbsp;">
+								<ButtonInput value="Search" bsStyle="primary" onClick={this.submit} />
+							</Input>
+						</Col>
+					</Row>
+				</Grid>
+			</Panel>
 		);
 	},
 
