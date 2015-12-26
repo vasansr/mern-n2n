@@ -213,12 +213,7 @@ var BugList = React.createClass({
 		this.props.history.push({pathname: '/bugs', search: '?' + $.param(filter)});
 	},
 
-	addBug: function(event) {
-		event.preventDefault();
-
-		var form = document.forms.newBug;
-		var bug = {owner: form.owner.value, title: form.title.value, priority: 'P3', status: 'Open'};
-
+	addBug: function(bug) {
 		$.ajax({
 			url: '/api/bugs', type: 'POST', contentType:'application/json',
 			data: JSON.stringify(bug),
@@ -234,9 +229,6 @@ var BugList = React.createClass({
 				console.error(status, err.toString());
 			}
 		});
-
-		// clear the form for the next entry
-		form.owner.value = ""; form.title.value = "";
 	},
 
 	render: function() {
@@ -265,15 +257,33 @@ var BugList = React.createClass({
 						</tbody>
 					</table>
 				</Panel>
-				<Panel header="Add Bug">
-					<form name="newBug" onSubmit={this.addBug}>
-						<Input type="text" name="title" label="Bug Title" />
-						<Input type="text" name="owner" label="Owner" />
-						<ButtonInput value="Add" bsStyle="primary" type="submit" />
-					</form>
-				</Panel>
+				<BugAdd submitHandler={this.addBug} />
 			</div>
 		)
+	}
+});
+
+var BugAdd = React.createClass({
+	render: function() {
+		return (
+			<Panel header="Add Bug">
+				<form name="newBug" onSubmit={this.submit}>
+					<Input type="text" name="title" label="Bug Title" />
+					<Input type="text" name="owner" label="Owner" />
+					<ButtonInput value="Add" bsStyle="primary" type="submit" />
+				</form>
+			</Panel>
+		)
+	},
+	submit: function(e) {
+		if (e) e.preventDefault();
+		var form = document.forms.newBug;
+		var bug = {owner: form.owner.value, title: form.title.value, priority: 'P3', status: 'Open'};
+
+		this.props.submitHandler(bug);
+
+		// clear the form for the next entry
+		form.owner.value = ""; form.title.value = "";
 	}
 });
 
