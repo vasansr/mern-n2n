@@ -249,14 +249,14 @@ var BugList = React.createClass({
 		return (
 			<div>
 				<BugFilter submitHandler={this.changeFilter} init={this.props.location.query}/>
-				<table className="bug-list">
+				<table className="table table-striped table-bordered table-condensed">
 					<thead>
-						<tr className="bug header">
-							<th className="bug-id">Id</th>
-							<th className="bug-status">Status</th>
-							<th className="bug-priority">Priority</th>
-							<th className="bug-owner">Owner</th>
-							<th className="bug-description">Title</th>
+						<tr>
+							<th>Id</th>
+							<th>Status</th>
+							<th>Priority</th>
+							<th>Owner</th>
+							<th>Title</th>
 						</tr>
 					</thead>
 					<tbody>
