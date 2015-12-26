@@ -249,25 +249,29 @@ var BugList = React.createClass({
 		return (
 			<div>
 				<BugFilter submitHandler={this.changeFilter} init={this.props.location.query}/>
-				<table className="table table-striped table-bordered table-condensed">
-					<thead>
-						<tr>
-							<th>Id</th>
-							<th>Status</th>
-							<th>Priority</th>
-							<th>Owner</th>
-							<th>Title</th>
-						</tr>
-					</thead>
-					<tbody>
-						{bugs}
-					</tbody>
-				</table>
-				<form name="newBug" onSubmit={this.addBug}>
-					<input type="text" name="title" size="40" placeholder="Bug Title" />
-					<input type="text" name="owner" placeholder="Owner" />
-					<button>Add</button>
-				</form>
+				<Panel>
+					<table className="table table-striped table-bordered table-condensed">
+						<thead>
+							<tr>
+								<th>Id</th>
+								<th>Status</th>
+								<th>Priority</th>
+								<th>Owner</th>
+								<th>Title</th>
+							</tr>
+						</thead>
+						<tbody>
+							{bugs}
+						</tbody>
+					</table>
+				</Panel>
+				<Panel header="Add Bug">
+					<form name="newBug" onSubmit={this.addBug}>
+						<Input type="text" name="title" label="Bug Title" />
+						<Input type="text" name="owner" label="Owner" />
+						<ButtonInput value="Add" bsStyle="primary" type="submit" />
+					</form>
+				</Panel>
 			</div>
 		)
 	}
