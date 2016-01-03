@@ -79,3 +79,7 @@ Add color and polish to the UI using Material UI.
 
 Add color and polish to the UI using React-Bootstrap.
 
+## Step 15: Modularize
+
+Separate out some of our classes into their own files.
+
